@@ -1,0 +1,24 @@
+[project]
+name = "youtube-to-html-summary"
+version = "0.1.0"
+description = "A tool to convert a youtube video from url to an html summary page"
+requires-python = ">=3.8"
+dependencies = [
+    "openai-whisper",
+    "pydub",
+    "numpy",
+    "torch",
+    "tqdm",
+    "openai",
+    "yt-dlp",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+[tool.hatch.metadata]
+allow-direct-references = true 
