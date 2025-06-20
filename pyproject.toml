@@ -11,6 +11,10 @@ dependencies = [
     "tqdm",
     "openai",
     "yt-dlp",
+    "fastapi",
+    "uvicorn",
+    "python-multipart",
+    "requests",
 ]
 
 [build-system]

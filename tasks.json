@@ -1,0 +1,16 @@
+{
+  "d5612f96-544d-4e2b-8f15-e1a08fbb8b85": {
+    "task_id": "d5612f96-544d-4e2b-8f15-e1a08fbb8b85",
+    "video_id": "q71d1Fed_os",
+    "status": "completed",
+    "progress": {
+      "current_step": "Completed",
+      "message": "Video processing completed successfully",
+      "progress_percent": 100.0,
+      "html_path": "downloads/q71d1Fed_os/processed/processed_content.html"
+    },
+    "created_at": "2025-06-20T08:38:38.671835",
+    "updated_at": "2025-06-20T08:42:40.301492",
+    "error": null
+  }
+}

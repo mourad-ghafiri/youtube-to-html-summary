@@ -99,6 +99,63 @@ python main.py "https://www.youtube.com/watch?v=YOUR_VIDEO_ID"
 
 Note: Make sure to wrap the URL in quotes!
 
+## Web Interface
+
+The project now includes a FastAPI web interface that provides a beautiful, user-friendly way to process YouTube videos.
+
+### Starting the Web Server
+
+1. Install the additional dependencies:
+   ```bash
+   uv pip install fastapi uvicorn python-multipart requests
+   ```
+
+2. Start the FastAPI server using one of these methods:
+
+   **Option 1: Using the startup script (recommended)**
+   ```bash
+   python start_server.py
+   ```
+   This script will check all dependencies and start the server with proper error handling.
+
+   **Option 2: Direct start**
+   ```bash
+   python api.py
+   ```
+
+3. Open your browser and navigate to `http://localhost:8000`
+
+### Web Interface Features
+
+- **Beautiful UI**: Modern, responsive interface built with Tailwind CSS
+- **Real-time Progress**: Live updates on processing status and progress
+- **Task Management**: View, monitor, and delete processing tasks
+- **Background Processing**: Videos are processed in the background using FastAPI's BackgroundTasks
+- **RESTful API**: Full API endpoints for integration with other applications
+
+### API Endpoints
+
+- `POST /api/process` - Start processing a YouTube video
+- `GET /api/status/{task_id}` - Get the status of a processing task
+- `GET /api/result/{task_id}` - Download the HTML result for a completed task
+- `GET /api/tasks` - List all tasks
+- `DELETE /api/tasks/{task_id}` - Delete a task
+
+### Example API Usage
+
+```bash
+# Start processing a video
+curl -X POST "http://localhost:8000/api/process" \
+     -H "Content-Type: application/json" \
+     -d '{"url": "https://www.youtube.com/watch?v=YOUR_VIDEO_ID"}'
+
+# Check task status
+curl "http://localhost:8000/api/status/{task_id}"
+
+# Download result
+curl "http://localhost:8000/api/result/{task_id}" -o result.html
+```
+
 ## Output
 
 The script creates a structured output in the `downloads` directory:
@@ -138,6 +195,10 @@ The final output is an HTML file that can be opened in any web browser and print
 - tqdm: For progress bars
 - openai: For API compatibility
 - yt-dlp: For YouTube video downloading
+- fastapi: For the web API
+- uvicorn: ASGI server for FastAPI
+- python-multipart: For handling form data
+- requests: For HTTP requests and dependency checking
 
 ## Contributing
 
@@ -171,4 +232,4 @@ SOFTWARE.
 
 - OpenAI for the Whisper model
 - Ollama for providing the local LLM infrastructure
-- The open-source community for various tools and libraries used in this project 
+- The open-source community for various tools and libraries used in this project

@@ -1,0 +1,11 @@
+openai-whisper
+pydub
+numpy
+torch
+tqdm
+openai
+yt-dlp
+fastapi
+uvicorn
+python-multipart
+requests 
