@@ -1,6 +1,8 @@
-# YouTube to HTML Summary Page
+# YouTube to HTML Summary
 
 An offline tool that converts YouTube videos into structured, educational summaries in HTML format. This tool downloads YouTube videos, transcribes them using OpenAI's Whisper, and processes the content using a local LLM (Ollama) to create comprehensive, well-structured summaries.
+
+![Application Screenshot](app.jpg)
 
 ## Features
 

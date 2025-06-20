@@ -44,9 +44,6 @@ Thumbs.db
 *.mp3
 *.mp4
 *.webp
-*.jpg
-*.jpeg
-*.png
 
 # Logs
 *.log 
