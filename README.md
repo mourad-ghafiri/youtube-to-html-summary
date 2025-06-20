@@ -149,8 +149,8 @@ The project now includes a **professional FastAPI web interface** with SQLite da
 - **Task Deletion**: Remove unwanted tasks from the system
 
 #### 👁️ **HTML Preview System**
-- **Iframe Preview**: View completed HTML summaries directly in the browser
-- **Modal Interface**: Clean, professional preview experience
+- **HTML Preview**: Full-page preview in new window/tab, ready for printing
+- **Print-Ready**: Optimized for printing with proper page formatting
 - **No Download Required**: Instant preview without file downloads
 - **Responsive Design**: Works on desktop and mobile devices
 
@@ -170,7 +170,7 @@ The project now includes a **professional FastAPI web interface** with SQLite da
 - **RESTful API**: Full API endpoints for integration with other applications
 - **Database Storage**: Persistent SQLite database for reliable data storage
 - **Statistics Dashboard**: Comprehensive analytics and metrics
-- **HTML Preview**: In-browser preview of completed summaries
+- **HTML Preview**: Full-page preview in new window/tab, ready for printing
 - **Advanced Filtering**: Filter and search tasks by various criteria
 
 ### API Endpoints

@@ -303,7 +303,7 @@ async def get_stats():
 
 @app.get("/api/result/{task_id}")
 async def get_result(task_id: str):
-    """Get the HTML result for a completed task."""
+    """Get the HTML result for a completed task (download)."""
     task = db.get_task(task_id)
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -323,6 +323,29 @@ async def get_result(task_id: str):
         media_type='text/html',
         filename=f"{task['video_id']}_summary.html"
     )
+
+@app.get("/api/preview/{task_id}")
+async def preview_result(task_id: str):
+    """Preview the HTML result for a completed task (opens in browser)."""
+    task = db.get_task(task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    if task['status'] != "completed":
+        raise HTTPException(status_code=400, detail="Task not completed")
+    
+    # Get the HTML file path
+    folders = setup_folder_structure(DEFAULT_OUTPUT_DIR, task['video_id'])
+    output_paths = get_output_paths(folders, task['video_id'])
+    
+    if not os.path.exists(output_paths['processed_html']):
+        raise HTTPException(status_code=404, detail="HTML file not found")
+    
+    # Read the HTML content and return it directly
+    with open(output_paths['processed_html'], 'r', encoding='utf-8') as f:
+        html_content = f.read()
+    
+    return HTMLResponse(content=html_content)
 
 @app.get("/api/events/{task_id}")
 async def get_task_events(task_id: str, limit: int = Query(20, ge=1, le=100)):

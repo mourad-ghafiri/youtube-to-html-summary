@@ -53,3 +53,7 @@ Thumbs.db
 
 # Database
 *.db
+*.sqlite
+*.sqlite3
+youtube_summary.db
+tasks.json

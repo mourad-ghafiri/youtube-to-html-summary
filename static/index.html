@@ -45,19 +45,6 @@
             from { transform: translateX(-100%); }
             to { transform: translateX(0); }
         }
-        .iframe-container {
-            position: relative;
-            width: 100%;
-            height: 600px;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .iframe-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
         .stats-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -210,25 +197,6 @@
         </div>
     </main>
 
-    <!-- Task Preview Modal -->
-    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-lg max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden">
-            <div class="flex items-center justify-between p-6 border-b">
-                <h3 class="text-xl font-semibold text-gray-800" id="previewTitle">Task Preview</h3>
-                <button id="closePreview" class="text-gray-500 hover:text-gray-700">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-            <div class="p-6">
-                <div id="previewContent">
-                    <!-- Preview content will be inserted here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Loading Modal -->
     <div id="loadingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-lg p-8 max-w-md mx-4 text-center">
@@ -285,18 +253,6 @@
                 // Cleanup
                 document.getElementById('cleanupBtn').addEventListener('click', () => {
                     this.cleanupOldTasks();
-                });
-
-                // Modal
-                document.getElementById('closePreview').addEventListener('click', () => {
-                    this.closePreview();
-                });
-
-                // Close modal on outside click
-                document.getElementById('previewModal').addEventListener('click', (e) => {
-                    if (e.target.id === 'previewModal') {
-                        this.closePreview();
-                    }
                 });
             }
 
@@ -528,16 +484,28 @@
                         ${task.status === 'completed' ? `
                             <div class="flex items-center justify-between mb-4">
                                 <p class="text-green-600 font-medium">✅ Processing completed successfully!</p>
-                                <button 
-                                    onclick="processor.previewTask('${task.task_id}')"
-                                    class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg transition-colors flex items-center"
-                                >
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                    </svg>
-                                    Preview Result
-                                </button>
+                                <div class="flex space-x-2">
+                                    <button 
+                                        onclick="processor.previewTask('${task.task_id}')"
+                                        class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg transition-colors flex items-center"
+                                    >
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
+                                        Preview
+                                    </button>
+                                    <a 
+                                        href="/api/result/${task.task_id}" 
+                                        download
+                                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center"
+                                    >
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        Download
+                                    </a>
+                                </div>
                             </div>
                         ` : ''}
 
@@ -592,32 +560,17 @@
 
             async previewTask(taskId) {
                 try {
-                    const response = await fetch(`/api/result/${taskId}`);
-                    if (!response.ok) throw new Error('Failed to load result');
+                    // Open the result in a new window/tab for full-page viewing and printing
+                    const previewWindow = window.open(`/api/preview/${taskId}`, '_blank');
                     
-                    const htmlContent = await response.text();
-                    
-                    // Show modal with iframe
-                    document.getElementById('previewTitle').textContent = 'HTML Summary Preview';
-                    document.getElementById('previewContent').innerHTML = `
-                        <div class="iframe-container">
-                            <iframe srcdoc="${htmlContent.replace(/"/g, '&quot;')}"></iframe>
-                        </div>
-                    `;
-                    
-                    document.getElementById('previewModal').classList.remove('hidden');
-                    document.getElementById('previewModal').classList.add('flex');
+                    if (!previewWindow) {
+                        this.showNotification('Please allow popups to view the preview', 'warning');
+                    }
                     
                 } catch (error) {
                     console.error('Error previewing task:', error);
                     this.showNotification('Error loading preview', 'error');
                 }
-            }
-
-            closePreview() {
-                document.getElementById('previewModal').classList.add('hidden');
-                document.getElementById('previewModal').classList.remove('flex');
-                document.getElementById('previewContent').innerHTML = '';
             }
 
             async deleteTask(taskId) {
