@@ -53,7 +53,15 @@ def check_ffmpeg():
 
 def main():
     """Main function to check dependencies and start the server."""
-    print("🚀 Starting YouTube to HTML Summary Server")
+    print("🚀 YouTube to HTML Summary API v2.0")
+    print("=" * 50)
+    print("✨ Enhanced Features:")
+    print("   • SQLite database storage")
+    print("   • Real-time task filtering")
+    print("   • Statistics dashboard")
+    print("   • Iframe preview for completed tasks")
+    print("   • Advanced task management")
+    print("   • Background processing")
     print("=" * 50)
     
     # Check Python dependencies
@@ -67,7 +75,8 @@ def main():
         ('openai', 'OpenAI'),
         ('torch', 'PyTorch'),
         ('numpy', 'NumPy'),
-        ('tqdm', 'tqdm')
+        ('tqdm', 'tqdm'),
+        ('requests', 'Requests')
     ]
     
     missing_deps = []
@@ -78,7 +87,7 @@ def main():
     if missing_deps:
         print(f"\n❌ Missing dependencies: {', '.join(missing_deps)}")
         print("Please install them using:")
-        print("uv pip install fastapi uvicorn openai-whisper pydub yt-dlp openai torch numpy tqdm")
+        print("uv pip install fastapi uvicorn openai-whisper pydub yt-dlp openai torch numpy tqdm requests")
         sys.exit(1)
     
     # Check system dependencies
@@ -101,6 +110,13 @@ def main():
     print("\n🌐 Starting FastAPI server...")
     print("📱 Open your browser and navigate to: http://localhost:8000")
     print("📚 API documentation available at: http://localhost:8000/docs")
+    print("📊 Database will be automatically created: youtube_summary.db")
+    print("\n🎯 New Features:")
+    print("   • Click 'Stats' button to view statistics dashboard")
+    print("   • Use filter buttons to view tasks by status")
+    print("   • Search tasks by video ID or title")
+    print("   • Click 'Preview Result' to view HTML in iframe")
+    print("   • Use 'Cleanup Old' to remove old tasks")
     print("\nPress Ctrl+C to stop the server.")
     print("=" * 50)
     

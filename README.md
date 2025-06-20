@@ -101,7 +101,7 @@ Note: Make sure to wrap the URL in quotes!
 
 ## Web Interface
 
-The project now includes a FastAPI web interface that provides a beautiful, user-friendly way to process YouTube videos.
+The project now includes a **professional FastAPI web interface** with SQLite database storage that provides a beautiful, user-friendly way to process YouTube videos with advanced features.
 
 ### Starting the Web Server
 
@@ -125,21 +125,64 @@ The project now includes a FastAPI web interface that provides a beautiful, user
 
 3. Open your browser and navigate to `http://localhost:8000`
 
+### ✨ Enhanced Features
+
+#### 🎯 **Professional Dashboard**
+- **Modern UI**: Beautiful, responsive interface built with Tailwind CSS
+- **Statistics Dashboard**: Real-time metrics and analytics
+- **Task Filtering**: Filter by status (All, Queued, Processing, Completed, Failed)
+- **Search Functionality**: Search tasks by video ID, title, or task ID
+- **Real-time Updates**: Live progress tracking with automatic polling
+
+#### 📊 **Database Storage**
+- **SQLite Database**: Persistent storage for all tasks and metadata
+- **Task History**: Complete history of all processed videos
+- **Metadata Tracking**: Processing time, file size, segments count, transcription length
+- **Event Logging**: Detailed event history for each task
+- **Automatic Cleanup**: Remove old completed/failed tasks
+
+#### 🔄 **Advanced Task Management**
+- **Background Processing**: Non-blocking video processing
+- **Multiple Concurrent Tasks**: Process multiple videos simultaneously
+- **Progress Tracking**: Real-time progress with detailed step information
+- **Error Handling**: Comprehensive error reporting and recovery
+- **Task Deletion**: Remove unwanted tasks from the system
+
+#### 👁️ **HTML Preview System**
+- **Iframe Preview**: View completed HTML summaries directly in the browser
+- **Modal Interface**: Clean, professional preview experience
+- **No Download Required**: Instant preview without file downloads
+- **Responsive Design**: Works on desktop and mobile devices
+
+#### 📈 **Statistics & Analytics**
+- **Total Tasks**: Count of all processed videos
+- **Completion Rate**: Number of successfully completed tasks
+- **Average Processing Time**: Performance metrics
+- **Recent Activity**: Tasks from the last 24 hours
+- **Status Distribution**: Breakdown by task status
+
 ### Web Interface Features
 
 - **Beautiful UI**: Modern, responsive interface built with Tailwind CSS
 - **Real-time Progress**: Live updates on processing status and progress
-- **Task Management**: View, monitor, and delete processing tasks
+- **Task Management**: View, monitor, filter, search, and delete processing tasks
 - **Background Processing**: Videos are processed in the background using FastAPI's BackgroundTasks
 - **RESTful API**: Full API endpoints for integration with other applications
+- **Database Storage**: Persistent SQLite database for reliable data storage
+- **Statistics Dashboard**: Comprehensive analytics and metrics
+- **HTML Preview**: In-browser preview of completed summaries
+- **Advanced Filtering**: Filter and search tasks by various criteria
 
 ### API Endpoints
 
 - `POST /api/process` - Start processing a YouTube video
-- `GET /api/status/{task_id}` - Get the status of a processing task
-- `GET /api/result/{task_id}` - Download the HTML result for a completed task
-- `GET /api/tasks` - List all tasks
+- `GET /api/status/{task_id}` - Get real-time processing status
+- `GET /api/result/{task_id}` - Download the generated HTML
+- `GET /api/tasks` - List tasks with filtering and pagination
+- `GET /api/stats` - Get comprehensive task statistics
+- `GET /api/events/{task_id}` - Get detailed task events
 - `DELETE /api/tasks/{task_id}` - Delete a task
+- `POST /api/cleanup` - Clean up old completed/failed tasks
 
 ### Example API Usage
 
@@ -152,9 +195,45 @@ curl -X POST "http://localhost:8000/api/process" \
 # Check task status
 curl "http://localhost:8000/api/status/{task_id}"
 
+# Get task statistics
+curl "http://localhost:8000/api/stats"
+
+# List completed tasks
+curl "http://localhost:8000/api/tasks?status=completed"
+
 # Download result
 curl "http://localhost:8000/api/result/{task_id}" -o result.html
+
+# Clean up old tasks (older than 30 days)
+curl -X POST "http://localhost:8000/api/cleanup?days=30"
 ```
+
+### Database Schema
+
+The application uses SQLite with the following tables:
+
+#### `tasks` Table
+- `task_id` - Unique task identifier
+- `video_id` - YouTube video ID
+- `video_url` - Original YouTube URL
+- `video_title` - Video title from YouTube
+- `status` - Current task status
+- `progress` - JSON progress data
+- `error_message` - Error details if failed
+- `created_at` - Task creation timestamp
+- `updated_at` - Last update timestamp
+- `completed_at` - Completion timestamp
+- `processing_time` - Total processing time in seconds
+- `file_size` - Generated HTML file size in MB
+- `segments_count` - Number of audio segments
+- `transcription_length` - Transcription character count
+
+#### `task_events` Table
+- `id` - Event identifier
+- `task_id` - Associated task ID
+- `event_type` - Type of event
+- `message` - Event description
+- `timestamp` - Event timestamp
 
 ## Output
 
@@ -185,6 +264,8 @@ The final output is an HTML file that can be opened in any web browser and print
    - Available system resources for the LLM
 
 3. **Storage**: The tool downloads and processes audio files, so ensure you have enough disk space.
+
+4. **Database**: The application automatically creates a SQLite database (`youtube_summary.db`) for persistent storage.
 
 ## Dependencies
 

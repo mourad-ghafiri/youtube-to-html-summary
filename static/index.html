@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube to HTML Summary</title>
+    <title>YouTube to HTML Summary - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -14,7 +14,8 @@
                         secondary: '#1E40AF',
                         success: '#10B981',
                         warning: '#F59E0B',
-                        error: '#EF4444'
+                        error: '#EF4444',
+                        dark: '#1F2937'
                     }
                 }
             }
@@ -37,28 +38,90 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
         }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: .5; }
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .task-card {
+            transition: all 0.2s ease-in-out;
+        }
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
     <!-- Header -->
     <header class="gradient-bg text-white shadow-lg">
-        <div class="container mx-auto px-6 py-8">
-            <div class="text-center">
-                <h1 class="text-4xl font-bold mb-2">YouTube to HTML Summary</h1>
-                <p class="text-xl opacity-90">Convert YouTube videos into structured, educational summaries</p>
+        <div class="container mx-auto px-6 py-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold">YouTube to HTML Summary</h1>
+                    <p class="text-lg opacity-90">Professional Video Processing Dashboard</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="refreshBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition-colors flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Refresh
+                    </button>
+                    <button id="statsBtn" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition-colors flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        Stats
+                    </button>
+                </div>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="container mx-auto px-6 py-8">
+        <!-- Statistics Dashboard -->
+        <div id="statsDashboard" class="hidden mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="stats-card rounded-lg p-6 text-center">
+                    <div class="text-3xl font-bold mb-2" id="totalTasks">0</div>
+                    <div class="text-sm opacity-90">Total Tasks</div>
+                </div>
+                <div class="stats-card rounded-lg p-6 text-center">
+                    <div class="text-3xl font-bold mb-2" id="completedTasks">0</div>
+                    <div class="text-sm opacity-90">Completed</div>
+                </div>
+                <div class="stats-card rounded-lg p-6 text-center">
+                    <div class="text-3xl font-bold mb-2" id="avgTime">0s</div>
+                    <div class="text-sm opacity-90">Avg Processing Time</div>
+                </div>
+                <div class="stats-card rounded-lg p-6 text-center">
+                    <div class="text-3xl font-bold mb-2" id="recentTasks">0</div>
+                    <div class="text-sm opacity-90">Last 24 Hours</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Input Section -->
         <div class="max-w-2xl mx-auto mb-8">
             <div class="bg-white rounded-lg card-shadow p-6 fade-in">
@@ -93,35 +156,78 @@
             </div>
         </div>
 
-        <!-- Tasks Section -->
-        <div class="max-w-4xl mx-auto">
-            <div class="bg-white rounded-lg card-shadow p-6 fade-in">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-semibold text-gray-800">Processing Tasks</h2>
-                    <button 
-                        id="refreshBtn"
-                        class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors flex items-center"
-                    >
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                        </svg>
-                        Refresh
-                    </button>
-                </div>
-                
-                <div id="tasksContainer" class="space-y-4">
-                    <!-- Tasks will be dynamically inserted here -->
-                </div>
-                
-                <div id="noTasks" class="text-center py-8 text-gray-500">
-                    <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    <p class="text-lg">No tasks yet. Start by processing a YouTube video above.</p>
+        <!-- Filter Section -->
+        <div class="max-w-6xl mx-auto mb-6">
+            <div class="bg-white rounded-lg card-shadow p-4">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center space-x-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Tasks</h3>
+                        <div class="flex space-x-2">
+                            <button id="filterAll" class="filter-btn px-3 py-1 rounded-full text-sm font-medium bg-primary text-white">
+                                All
+                            </button>
+                            <button id="filterQueued" class="filter-btn px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
+                                Queued
+                            </button>
+                            <button id="filterProcessing" class="filter-btn px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
+                                Processing
+                            </button>
+                            <button id="filterCompleted" class="filter-btn px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
+                                Completed
+                            </button>
+                            <button id="filterFailed" class="filter-btn px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300">
+                                Failed
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Search tasks..."
+                            class="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent"
+                        >
+                        <button id="cleanupBtn" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm transition-colors">
+                            Cleanup Old
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- Tasks Section -->
+        <div class="max-w-6xl mx-auto">
+            <div id="tasksContainer" class="space-y-4">
+                <!-- Tasks will be dynamically inserted here -->
+            </div>
+            
+            <div id="noTasks" class="text-center py-12 text-gray-500">
+                <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <p class="text-lg">No tasks found. Start by processing a YouTube video above.</p>
+            </div>
+        </div>
     </main>
+
+    <!-- Task Preview Modal -->
+    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden">
+            <div class="flex items-center justify-between p-6 border-b">
+                <h3 class="text-xl font-semibold text-gray-800" id="previewTitle">Task Preview</h3>
+                <button id="closePreview" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <div id="previewContent">
+                    <!-- Preview content will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Loading Modal -->
     <div id="loadingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
@@ -135,7 +241,9 @@
     <script>
         class YouTubeProcessor {
             constructor() {
-                this.tasks = new Map();
+                this.tasks = [];
+                this.filteredTasks = [];
+                this.currentFilter = 'all';
                 this.pollingInterval = null;
                 this.init();
             }
@@ -143,6 +251,7 @@
             init() {
                 this.bindEvents();
                 this.loadTasks();
+                this.loadStats();
                 this.startPolling();
             }
 
@@ -154,6 +263,40 @@
 
                 document.getElementById('refreshBtn').addEventListener('click', () => {
                     this.loadTasks();
+                    this.loadStats();
+                });
+
+                document.getElementById('statsBtn').addEventListener('click', () => {
+                    this.toggleStats();
+                });
+
+                // Filter buttons
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.setFilter(e.target.id.replace('filter', '').toLowerCase());
+                    });
+                });
+
+                // Search
+                document.getElementById('searchInput').addEventListener('input', (e) => {
+                    this.filterTasks();
+                });
+
+                // Cleanup
+                document.getElementById('cleanupBtn').addEventListener('click', () => {
+                    this.cleanupOldTasks();
+                });
+
+                // Modal
+                document.getElementById('closePreview').addEventListener('click', () => {
+                    this.closePreview();
+                });
+
+                // Close modal on outside click
+                document.getElementById('previewModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'previewModal') {
+                        this.closePreview();
+                    }
                 });
             }
 
@@ -187,17 +330,8 @@
                     this.showNotification('Video processing started successfully!', 'success');
                     document.getElementById('videoUrl').value = '';
                     
-                    // Add task to local state
-                    this.tasks.set(result.task_id, {
-                        task_id: result.task_id,
-                        video_id: result.video_id,
-                        status: result.status,
-                        progress: {},
-                        created_at: new Date().toISOString(),
-                        updated_at: new Date().toISOString()
-                    });
-                    
-                    this.renderTasks();
+                    // Reload tasks to show the new one
+                    this.loadTasks();
                     
                 } catch (error) {
                     console.error('Error processing video:', error);
@@ -210,38 +344,94 @@
 
             async loadTasks() {
                 try {
-                    const response = await fetch('/api/tasks');
+                    const response = await fetch('/api/tasks?limit=100');
                     if (!response.ok) throw new Error('Failed to load tasks');
                     
-                    const tasksData = await response.json();
-                    this.tasks = new Map(Object.entries(tasksData));
-                    this.renderTasks();
+                    this.tasks = await response.json();
+                    this.filterTasks();
                 } catch (error) {
                     console.error('Error loading tasks:', error);
                 }
             }
 
-            async updateTaskStatus(taskId) {
+            async loadStats() {
                 try {
-                    const response = await fetch(`/api/status/${taskId}`);
-                    if (!response.ok) throw new Error('Failed to get task status');
+                    const response = await fetch('/api/stats');
+                    if (!response.ok) throw new Error('Failed to load stats');
                     
-                    const taskData = await response.json();
-                    this.tasks.set(taskId, taskData);
-                    this.renderTasks();
+                    const stats = await response.json();
+                    this.updateStatsDisplay(stats);
                 } catch (error) {
-                    console.error('Error updating task status:', error);
+                    console.error('Error loading stats:', error);
                 }
+            }
+
+            updateStatsDisplay(stats) {
+                document.getElementById('totalTasks').textContent = stats.total_tasks;
+                document.getElementById('completedTasks').textContent = stats.status_counts.completed || 0;
+                document.getElementById('avgTime').textContent = `${stats.avg_processing_time}s`;
+                document.getElementById('recentTasks').textContent = stats.recent_tasks;
+            }
+
+            toggleStats() {
+                const dashboard = document.getElementById('statsDashboard');
+                dashboard.classList.toggle('hidden');
+            }
+
+            setFilter(filter) {
+                this.currentFilter = filter;
+                
+                // Update button styles
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.className = 'filter-btn px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-700 hover:bg-gray-300';
+                });
+                
+                const activeBtn = document.getElementById(`filter${filter.charAt(0).toUpperCase() + filter.slice(1)}`);
+                if (activeBtn) {
+                    activeBtn.className = 'filter-btn px-3 py-1 rounded-full text-sm font-medium bg-primary text-white';
+                }
+                
+                this.filterTasks();
+            }
+
+            filterTasks() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                
+                this.filteredTasks = this.tasks.filter(task => {
+                    // Status filter
+                    if (this.currentFilter !== 'all' && task.status !== this.currentFilter) {
+                        return false;
+                    }
+                    
+                    // Search filter
+                    if (searchTerm) {
+                        const searchFields = [
+                            task.video_id,
+                            task.video_title || '',
+                            task.task_id
+                        ].join(' ').toLowerCase();
+                        
+                        if (!searchFields.includes(searchTerm)) {
+                            return false;
+                        }
+                    }
+                    
+                    return true;
+                });
+                
+                this.renderTasks();
             }
 
             startPolling() {
                 this.pollingInterval = setInterval(() => {
-                    this.tasks.forEach((task, taskId) => {
-                        if (task.status === 'queued' || task.status === 'processing') {
-                            this.updateTaskStatus(taskId);
-                        }
-                    });
-                }, 2000); // Poll every 2 seconds
+                    const hasActiveTasks = this.tasks.some(task => 
+                        task.status === 'queued' || task.status === 'processing'
+                    );
+                    
+                    if (hasActiveTasks) {
+                        this.loadTasks();
+                    }
+                }, 3000); // Poll every 3 seconds
             }
 
             stopPolling() {
@@ -255,7 +445,7 @@
                 const container = document.getElementById('tasksContainer');
                 const noTasks = document.getElementById('noTasks');
                 
-                if (this.tasks.size === 0) {
+                if (this.filteredTasks.length === 0) {
                     container.innerHTML = '';
                     noTasks.classList.remove('hidden');
                     return;
@@ -263,8 +453,7 @@
 
                 noTasks.classList.add('hidden');
                 
-                const tasksHtml = Array.from(this.tasks.values())
-                    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                const tasksHtml = this.filteredTasks
                     .map(task => this.renderTask(task))
                     .join('');
                 
@@ -291,14 +480,20 @@
                 const currentStep = progress.current_step || 'Initializing';
                 const message = progress.message || 'Processing...';
 
+                const processingTime = task.processing_time ? `${Math.round(task.processing_time)}s` : '';
+                const fileSize = task.file_size ? `${task.file_size.toFixed(2)} MB` : '';
+                const segmentsCount = task.segments_count || 0;
+                const transcriptionLength = task.transcription_length ? `${Math.round(task.transcription_length / 1000)}k chars` : '';
+
                 return `
-                    <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                    <div class="task-card bg-white rounded-lg card-shadow p-6 border border-gray-200">
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center space-x-3">
                                 <span class="text-2xl">${statusIcons[task.status]}</span>
                                 <div>
-                                    <h3 class="font-semibold text-gray-800">Video ID: ${task.video_id}</h3>
-                                    <p class="text-sm text-gray-500">Task ID: ${task.task_id}</p>
+                                    <h3 class="font-semibold text-gray-800">${task.video_title || 'Unknown Title'}</h3>
+                                    <p class="text-sm text-gray-500">Video ID: ${task.video_id}</p>
+                                    <p class="text-xs text-gray-400">Task ID: ${task.task_id}</p>
                                 </div>
                             </div>
                             <div class="flex items-center space-x-2">
@@ -331,37 +526,98 @@
                         ` : ''}
 
                         ${task.status === 'completed' ? `
-                            <div class="flex items-center justify-between">
+                            <div class="flex items-center justify-between mb-4">
                                 <p class="text-green-600 font-medium">✅ Processing completed successfully!</p>
-                                <a 
-                                    href="/api/result/${task.task_id}" 
-                                    target="_blank"
+                                <button 
+                                    onclick="processor.previewTask('${task.task_id}')"
                                     class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg transition-colors flex items-center"
                                 >
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                     </svg>
-                                    View Result
-                                </a>
+                                    Preview Result
+                                </button>
                             </div>
                         ` : ''}
 
                         ${task.status === 'failed' ? `
-                            <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
                                 <p class="text-red-800 text-sm">
-                                    <strong>Error:</strong> ${task.error || 'Unknown error occurred'}
+                                    <strong>Error:</strong> ${task.error_message || 'Unknown error occurred'}
                                 </p>
                             </div>
                         ` : ''}
 
-                        <div class="mt-4 text-xs text-gray-500">
-                            Created: ${new Date(task.created_at).toLocaleString()}
-                            ${task.updated_at !== task.created_at ? 
-                                `<br>Updated: ${new Date(task.updated_at).toLocaleString()}` : ''
-                            }
+                        <!-- Task Metadata -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                            <div>
+                                <span class="font-medium">Created:</span><br>
+                                ${new Date(task.created_at).toLocaleString()}
+                            </div>
+                            ${task.completed_at ? `
+                                <div>
+                                    <span class="font-medium">Completed:</span><br>
+                                    ${new Date(task.completed_at).toLocaleString()}
+                                </div>
+                            ` : ''}
+                            ${processingTime ? `
+                                <div>
+                                    <span class="font-medium">Processing Time:</span><br>
+                                    ${processingTime}
+                                </div>
+                            ` : ''}
+                            ${fileSize ? `
+                                <div>
+                                    <span class="font-medium">File Size:</span><br>
+                                    ${fileSize}
+                                </div>
+                            ` : ''}
+                            ${segmentsCount ? `
+                                <div>
+                                    <span class="font-medium">Segments:</span><br>
+                                    ${segmentsCount}
+                                </div>
+                            ` : ''}
+                            ${transcriptionLength ? `
+                                <div>
+                                    <span class="font-medium">Transcription:</span><br>
+                                    ${transcriptionLength}
+                                </div>
+                            ` : ''}
                         </div>
                     </div>
                 `;
+            }
+
+            async previewTask(taskId) {
+                try {
+                    const response = await fetch(`/api/result/${taskId}`);
+                    if (!response.ok) throw new Error('Failed to load result');
+                    
+                    const htmlContent = await response.text();
+                    
+                    // Show modal with iframe
+                    document.getElementById('previewTitle').textContent = 'HTML Summary Preview';
+                    document.getElementById('previewContent').innerHTML = `
+                        <div class="iframe-container">
+                            <iframe srcdoc="${htmlContent.replace(/"/g, '&quot;')}"></iframe>
+                        </div>
+                    `;
+                    
+                    document.getElementById('previewModal').classList.remove('hidden');
+                    document.getElementById('previewModal').classList.add('flex');
+                    
+                } catch (error) {
+                    console.error('Error previewing task:', error);
+                    this.showNotification('Error loading preview', 'error');
+                }
+            }
+
+            closePreview() {
+                document.getElementById('previewModal').classList.add('hidden');
+                document.getElementById('previewModal').classList.remove('flex');
+                document.getElementById('previewContent').innerHTML = '';
             }
 
             async deleteTask(taskId) {
@@ -374,12 +630,32 @@
 
                     if (!response.ok) throw new Error('Failed to delete task');
 
-                    this.tasks.delete(taskId);
-                    this.renderTasks();
                     this.showNotification('Task deleted successfully', 'success');
+                    this.loadTasks();
                 } catch (error) {
                     console.error('Error deleting task:', error);
                     this.showNotification('Error deleting task', 'error');
+                }
+            }
+
+            async cleanupOldTasks() {
+                const days = prompt('Enter number of days to keep tasks (default: 30):', '30');
+                if (!days) return;
+
+                try {
+                    const response = await fetch(`/api/cleanup?days=${days}`, {
+                        method: 'POST'
+                    });
+
+                    if (!response.ok) throw new Error('Failed to cleanup tasks');
+
+                    const result = await response.json();
+                    this.showNotification(result.message, 'success');
+                    this.loadTasks();
+                    this.loadStats();
+                } catch (error) {
+                    console.error('Error cleaning up tasks:', error);
+                    this.showNotification('Error cleaning up tasks', 'error');
                 }
             }
 
